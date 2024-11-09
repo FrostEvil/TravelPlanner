@@ -1,4 +1,4 @@
-import { GeocodedData } from "@/types/type";
+import { DetailedTravelProps } from "@/types/type";
 import {
   Sidebar,
   SidebarContent,
@@ -7,12 +7,6 @@ import {
   useSidebar,
 } from "./ui/sidebar";
 import { IoMdClose } from "react-icons/io";
-import { useEffect } from "react";
-
-type TravelDetailsProps = GeocodedData & {
-  setIsTravelDetailsShowing: React.Dispatch<React.SetStateAction<boolean>>;
-  isTravelDetailsShowing: boolean;
-};
 
 function TravelDetails({
   city,
@@ -24,24 +18,30 @@ function TravelDetails({
   state,
   timezone,
   offset_time,
-  isTravelDetailsShowing,
-  setIsTravelDetailsShowing,
-}: TravelDetailsProps) {
+}: DetailedTravelProps) {
+  const { open, setOpen } = useSidebar();
+
+  const handleCloseModalByEscape = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key === "Escape") {
+      setOpen(!!open);
+    }
+  };
+
   const handleCloseSidebar = () => {
-    // setIsTravelDetailsShowing(false);
     setOpen(!open);
   };
 
-  // useEffect(() => {
-  //   setOpen(false);
-  // }, []);
-
-  const { open, setOpen } = useSidebar();
-  console.log(open);
   return (
-    <>
-      <Sidebar side="right" className="z-30">
-        <SidebarContent className="relative">
+    <div className="absolute" onClick={handleCloseSidebar}>
+      <Sidebar
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        side="right"
+        className="z-50"
+        onKeyUp={handleCloseModalByEscape}
+      >
+        <SidebarContent>
           <SidebarGroup>
             <ul className="mt-10 flex flex-col gap-y-4 w-full px-2 ">
               <li className="font-semibold">City: {city}</li>
@@ -64,10 +64,8 @@ function TravelDetails({
           </SidebarMenuButton>
         </SidebarContent>
       </Sidebar>
-      {isTravelDetailsShowing && (
-        <div className="fixed inset-0 bg-white opacity-80 z-20"></div>
-      )}
-    </>
+      {open && <div className="fixed inset-0 bg-white opacity-80 z-40"></div>}
+    </div>
   );
 }
 

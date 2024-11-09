@@ -1,14 +1,3 @@
 {
-  "travels": [
-    {
-      "id": "82b5be1c-dfb3-48a6-8353-077fef0566e4",
-      "place": "Oslo",
-      "date": "2024-10-27"
-    },
-    {
-      "id": "669ba97f-aedd-4526-b1e9-44ff0e2a1209",
-      "place": "Madrit",
-      "date": "2024-10-27"
-    }
-  ]
+  "travels": []
 }

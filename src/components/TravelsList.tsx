@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import TravelItem from "./TravelItem";
 import getTravels from "@/api/getTravels";
+import TravelItem from "./TravelItem";
+import { useQuery } from "@tanstack/react-query";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
 function TravelsList() {
   const { data: travels } = useQuery({
     queryKey: ["travels"],

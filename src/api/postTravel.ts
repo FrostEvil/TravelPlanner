@@ -1,13 +1,13 @@
-import { TravelProps } from "@/types/type";
 import axios from "axios";
+import { TravelProps } from "@/types/type";
 
-type PostTravel = {
+type PostTravelProp = {
   postStatus: string;
 };
 
-const postTravel = async (place: TravelProps): Promise<PostTravel> => {
+const postTravel = async (city: TravelProps): Promise<PostTravelProp> => {
   try {
-    const reponse = await axios.post("http://localhost:3000/travels", place);
+    const reponse = await axios.post("http://localhost:3000/travels", city);
     if (reponse.status !== 201) {
       return { postStatus: "Failed" };
     }

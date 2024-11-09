@@ -1,10 +1,10 @@
 export interface TravelProps {
   id: string;
-  place: string;
+  city: string;
   date: string;
 }
 
-export interface GeocodedData {
+export interface DetailedTravelProps {
   city: string;
   country: string;
   lat: number;
@@ -14,6 +14,11 @@ export interface GeocodedData {
   state: string;
   timezone: string;
   offset_time: string;
+  id: string;
+}
+
+export interface ModalProps {
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface StartEndCoords {
@@ -27,7 +32,3 @@ export interface formValuesProps {
   city: string;
   travelDate: string;
 }
-
-export type ModalProps = {
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
