@@ -30,13 +30,12 @@ To run this project locally, follow these steps:
 
 ```bash
 npm install
+```
+
 Start JSON Server
 JSON Server is used to simulate a REST API. Run the following command to start the JSON Server at http://localhost:3001.
 
-```
-
 ```bash
-Skopiuj kod
 npm run json-server
 ```
 
@@ -45,7 +44,6 @@ Note: The JSON server will use db.json as its data source, where you can find or
 3. **Start the development server**
 
 ```bash
-Skopiuj kod
 npm run dev
 ```
 
