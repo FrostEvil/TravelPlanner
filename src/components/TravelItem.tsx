@@ -98,7 +98,7 @@ function TravelItem({ city, date, id }: TravelProps) {
         {isTravelShow ? "Hide" : "Show"}
       </Button>
       <Button onClick={handleShowSidebarTravelDetails} size="sm">
-        See details
+        More
       </Button>
     </div>
   );

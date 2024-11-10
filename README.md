@@ -1,50 +1,54 @@
-# React + TypeScript + Vite
+🌍 Travel List API with Interactive Map
+This project is a Travel List API that allows users to view and manage a list of travel locations. Each location can be displayed on a map, and users can view detailed information in a sidebar. The app is built with React, Vite, TypeScript, and Tailwind CSS to ensure fast, efficient, and stylish performance.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+✨ Features
+Travel List Display: Lists all travel added by the user.
+Interactive Map View: Click on "Show" to visualize each travel location on a dynamic map.
+Detail Sidebar: Click "More" to see detailed information about each travel location in a collapsible sidebar.
+Responsive Design: Fully optimized for desktop and mobile views with Tailwind CSS.
+Fast and Lightweight: Built with Vite for quick load times and efficient bundling.
 
-Currently, two official plugins are available:
+🚀 Tech Stack
+Frontend: React, TypeScript
+Styling: Tailwind CSS
+Bundler: Vite
+Mock Backend: JSON Server
+📸 Screenshots
+Travel List View Map View Details Sidebar
+📦 Installation
+To run this project locally, follow these steps:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Clone the repository
 
-## Expanding the ESLint configuration
+bash
+Skopiuj kod
+git clone https://github.com/yourusername/your-repo-name.git
+cd your-repo-name
+Install dependencies
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+bash
+Skopiuj kod
+npm install
+Start JSON Server
+JSON Server is used to simulate a REST API. Run the following command to start the JSON Server at http://localhost:3001.
 
-- Configure the top-level `parserOptions` property like this:
+bash
+Skopiuj kod
+npm run json-server
+Note: The JSON server will use db.json as its data source, where you can find or modify mock data for travel locations.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Start the development server
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+bash
+Skopiuj kod
+npm run dev
+Access the app
+Open http://localhost:3000 in your browser.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+⚙️ Usage
+Add Travel Locations: Add new travel locations to your list.
+View Locations on Map: Click the "Show" button next to any travel location to view it on the map.
+See Details: Click "More" to expand the sidebar with detailed information about the selected location.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+🤝 Contributions
+Contributions are welcome! Please submit a pull request or open an issue for suggestions and feedback.
