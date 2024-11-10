@@ -9,7 +9,7 @@ async function validateAndAddTravel(formValues: TravelProps) {
     (travel) => travel.city === formValues.city
   );
   if (find) {
-    const postStatus = undefined;
+    const postStatus = "exist";
     return postStatus;
   }
   const newPlaceGeocodedData = await getGeocodedData(formValues.city);
