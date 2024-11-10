@@ -1,3 +1,4 @@
+import validateAndAddTravel from "@/utils/validateAndAddTravel";
 import { formSchema } from "@/schemas/formSchema";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,34 +19,38 @@ import { Calendar } from "./ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
-import checkTravel from "@/utils/checkTravel";
 import { ModalProps } from "@/types/type";
 import { toast } from "@/hooks/use-toast";
-import { ShowTravelContext } from "@/pages/TravelPlannerPage";
+import { TravelContext } from "@/pages/TravelPlannerPage";
 import { useContext } from "react";
 
 function NewTravelForm({ setIsModalOpen }: ModalProps) {
-  const { setKey, setShownTravels } = useContext(ShowTravelContext);
+  const { setKey, setSelectedTravelsForMap } = useContext(TravelContext);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      place: "",
-    },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const postStatus = await checkTravel({
+    const postStatus = await validateAndAddTravel({
       id: uuidv4(),
-      place: values.place,
+      city: values.city,
       date: values.date.toISOString().split("T")[0],
     });
-    if (postStatus === "Success") {
+    if (postStatus === undefined) {
+      toast({
+        variant: "destructive",
+        description: "This travel already exist!",
+      });
+      form.reset();
+      return;
+    }
+    if (postStatus) {
       toast({
         description: "You have successfully added a new place!",
       });
       setKey((k) => k + 1);
-      setShownTravels([]);
+      setSelectedTravelsForMap([]);
       setIsModalOpen(false);
     } else {
       toast({
@@ -53,18 +58,23 @@ function NewTravelForm({ setIsModalOpen }: ModalProps) {
         description: "Something went wrong... Try again.",
       });
     }
+    form.reset();
   }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="place"
+          name="city"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Enter city: </FormLabel>
               <FormControl>
-                <Input placeholder="city name..." {...field} />
+                <Input
+                  placeholder="city name..."
+                  {...field}
+                  value={field.value || ""}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

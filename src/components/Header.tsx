@@ -1,22 +1,10 @@
+import Modal from "./Modal";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Modal from "./Modal";
 
 function Header() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    if (isModalOpen) setIsModalOpen(false);
-  };
-
-  const handleCloseModalByEscape = (e: React.KeyboardEvent<HTMLElement>) => {
-    if (e.key === "Escape") setIsModalOpen(false);
-  };
 
   useEffect(() => {
     if (isModalOpen) {
@@ -28,25 +16,42 @@ function Header() {
     };
   }, [isModalOpen]);
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    if (isModalOpen) setIsModalOpen(false);
+  };
+
+  const handleCloseModalByEscapeKey = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key === "Escape") setIsModalOpen(false);
+  };
+
   return (
     <header
       onClick={handleCloseModal}
-      onKeyUp={handleCloseModalByEscape}
+      onKeyUp={handleCloseModalByEscapeKey}
       className="relative h-16 w-full z-10 bg-white"
     >
       <div className="container h-full">
         <div className="flex justify-between items-center h-full mx-4">
-          <Link to="/" className="text-2xl font-serif">
+          <Link to="/" className="text-xl sm:text-2xl font-serif">
             Travel Planner
           </Link>
-          <Button onClick={handleOpenModal} size="lg">
+          <Button
+            onClick={handleOpenModal}
+            size="lg"
+            className="text-sm sm:text-base px-6 sm:px-8"
+          >
             Add a new trip
           </Button>
         </div>
       </div>
-      <div>{isModalOpen && <Modal setIsModalOpen={setIsModalOpen} />}</div>
+      <div>{isModalOpen && <Modal {...{ setIsModalOpen }} />}</div>
     </header>
   );
 }
+//sm:size-lg
 
 export default Header;

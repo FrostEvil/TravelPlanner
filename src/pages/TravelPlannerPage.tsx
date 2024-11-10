@@ -1,97 +1,71 @@
 import Header from "@/components/Header";
 import TravelsList from "@/components/TravelsList";
-import { createContext, useState } from "react";
-import { GeocodedData } from "@/types/type";
 import TravelsMapContainer from "../components/TravelsMapContainer";
-import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import TravelDetails from "@/components/TravelDetails";
+import { createContext, useState } from "react";
+import { DetailedTravelProps } from "@/types/type";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 type TravelContextType = {
-  shownTravels: GeocodedData[] | null;
-  setShownTravels: React.Dispatch<React.SetStateAction<GeocodedData[] | null>>;
+  selectedTravelsForMap: DetailedTravelProps[] | null;
+  setSelectedTravelsForMap: React.Dispatch<
+    React.SetStateAction<DetailedTravelProps[] | null>
+  >;
   key: number;
   setKey: React.Dispatch<React.SetStateAction<number>>;
-  isTravelDetailsShowing: boolean;
-  setIsTravelDetailsShowing: React.Dispatch<React.SetStateAction<boolean>>;
   setDetailedTravel: React.Dispatch<
-    React.SetStateAction<GeocodedData | undefined>
+    React.SetStateAction<DetailedTravelProps | undefined>
   >;
-  // open: boolean;
-  // setOpen: (open: boolean) => void;
 };
 
-const iTravelContextState = {
-  shownTravels: null,
-  setShownTravels: () => {},
+const TravelContextState = {
+  selectedTravelsForMap: null,
+  setSelectedTravelsForMap: () => {},
   key: 0,
   setKey: () => {},
-  isTravelDetailsShowing: false,
-  setIsTravelDetailsShowing: () => {},
   setDetailedTravel: () => {},
-  // open: false,
-  // setOpen: () => {},
 };
 
-export const ShowTravelContext =
-  createContext<TravelContextType>(iTravelContextState);
+export const TravelContext =
+  createContext<TravelContextType>(TravelContextState);
 
 function TravelPlannerPage() {
-  const [shownTravels, setShownTravels] = useState<GeocodedData[] | null>([]);
+  // Stored travels which its path displayed on map
+  const [selectedTravelsForMap, setSelectedTravelsForMap] = useState<
+    DetailedTravelProps[] | null
+  >([]);
+  // Stored detailed info about selected travel - "shows on sidebar after see details button is clicked"
+  const [detailedTravel, setDetailedTravel] = useState<DetailedTravelProps>();
+  // Hook which cause re render of TravelsList component when a new travel is added
   const [key, setKey] = useState<number>(0);
-  const [isTravelDetailsShowing, setIsTravelDetailsShowing] =
-    useState<boolean>(false);
-  const [detailedTravel, setDetailedTravel] = useState<GeocodedData>();
-
-  // const handleCloseSidebarByEscape = (e: React.KeyboardEvent<HTMLElement>) => {
-  //   console.log(isTravelDetailsShowing);
-  //   if (e.key === "Escape") setIsTravelDetailsShowing(false);
-  // };
 
   return (
-    <ShowTravelContext.Provider
-      value={{
-        shownTravels,
-        setShownTravels,
-        key,
-        setKey,
-        isTravelDetailsShowing,
-        setIsTravelDetailsShowing,
-        setDetailedTravel,
-      }}
-    >
-      <Header />
-      <section key={key}>
-        <div className="w-full h-[calc(100vh-64px)] bg-bgImage  bg-center bg-no-repeat bg-cover shadow-inner -z-10 before:absolute before:w-full before:h-screen before:inset-0 before:bg-[#00000044]">
-          <div className="container h-full">
-            <div className="relative flex justify-between items-center h-full z-20">
-              <TravelsList />
-              <TravelsMapContainer />
+    <SidebarProvider defaultOpen={false}>
+      {detailedTravel && <TravelDetails {...detailedTravel} />}
+      <main className="w-full">
+        <TravelContext.Provider
+          value={{
+            selectedTravelsForMap,
+            setSelectedTravelsForMap,
+            key,
+            setKey,
+            setDetailedTravel,
+          }}
+        >
+          <Header />
+          <section key={key}>
+            <div className="h-[calc(100vh-64px)] bg-bgImage  bg-center bg-no-repeat bg-cover shadow-inner -z-10 before:absolute before:w-full before:h-screen before:inset-0 before:bg-[#00000044]">
+              <div className="container h-full">
+                <div className=" gap-4 mx-4 relative flex flex-col md:flex-row justify-around items-center h-full z-20">
+                  <TravelsList />
+                  <TravelsMapContainer />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
-      <section>
-        <SidebarProvider className="absolute top-0 h-fit" defaultOpen={false}>
-          {/* {detailedTravel && (
-            <TravelDetails
-              {...{
-                ...detailedTravel,
-                isTravelDetailsShowing,
-                setIsTravelDetailsShowing,
-              }}
-            />
-          )} */}
-
-          <TravelDetails
-            {...{
-              ...detailedTravel!,
-              isTravelDetailsShowing,
-              setIsTravelDetailsShowing,
-            }}
-          />
-        </SidebarProvider>
-      </section>
-    </ShowTravelContext.Provider>
+          </section>
+        </TravelContext.Provider>
+      </main>
+    </SidebarProvider>
   );
 }
 

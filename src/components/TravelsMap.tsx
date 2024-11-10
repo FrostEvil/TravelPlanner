@@ -1,19 +1,20 @@
 import "leaflet/dist/leaflet.css";
-import { useContext, useEffect } from "react";
-import { ShowTravelContext } from "@/pages/TravelPlannerPage";
-import { Marker, Popup, GeoJSON, useMap } from "react-leaflet";
 import curvedLine from "@/utils/curvedLine";
+import { useContext, useEffect } from "react";
+import { TravelContext } from "@/pages/TravelPlannerPage";
+import { Marker, Popup, GeoJSON, useMap } from "react-leaflet";
 import { LatLngBoundsExpression } from "leaflet";
 import { startLan, startLon } from "@/constants/starterMarkerCoords";
 
 function TravelsMap() {
-  const { shownTravels } = useContext(ShowTravelContext);
+  const { selectedTravelsForMap, key } = useContext(TravelContext);
   const map = useMap();
+
   const setStyle = () => {
     return { weight: 3, color: "red" };
   };
 
-  let uptadedMarkers = shownTravels?.map((travel) => {
+  let uptadedMarkers = selectedTravelsForMap?.map((travel) => {
     const curved = curvedLine({
       startLan,
       startLon,
@@ -21,7 +22,7 @@ function TravelsMap() {
       endLon: travel.lon,
     });
     return (
-      <div key={travel.city}>
+      <div key={travel.id}>
         <Marker position={[travel.lat, travel.lon]}>
           <Popup className="capitalize">{travel.city}</Popup>
         </Marker>
@@ -31,21 +32,27 @@ function TravelsMap() {
   });
 
   useEffect(() => {
-    if (shownTravels?.length) {
-      const b: LatLngBoundsExpression = shownTravels.map((travel) => {
-        return [travel.lat, travel.lon];
-      });
-      b.push([startLan, startLon]);
-      map.fitBounds(b);
+    uptadedMarkers = [];
+  }, []);
+
+  useEffect(() => {
+    if (selectedTravelsForMap?.length) {
+      const travelCoords: LatLngBoundsExpression = selectedTravelsForMap.map(
+        (travel) => {
+          return [travel.lat, travel.lon];
+        }
+      );
+      travelCoords.push([startLan, startLon]);
+      map.fitBounds(travelCoords);
     }
-  }, [shownTravels]);
+  }, [selectedTravelsForMap]);
 
   return (
     <div>
       <Marker position={[51.246452, 22.568445]}>
         <Popup>Lublin</Popup>
       </Marker>
-      {shownTravels && uptadedMarkers}
+      {selectedTravelsForMap && uptadedMarkers}
     </div>
   );
 }
