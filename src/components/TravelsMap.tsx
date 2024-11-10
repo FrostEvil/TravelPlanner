@@ -7,14 +7,13 @@ import { LatLngBoundsExpression } from "leaflet";
 import { startLan, startLon } from "@/constants/starterMarkerCoords";
 
 function TravelsMap() {
-  const { selectedTravelsForMap } = useContext(TravelContext);
+  const { selectedTravelsForMap, key } = useContext(TravelContext);
   const map = useMap();
-  const { key } = useContext(TravelContext);
 
   const setStyle = () => {
     return { weight: 3, color: "red" };
   };
-  console.log(selectedTravelsForMap);
+
   let uptadedMarkers = selectedTravelsForMap?.map((travel) => {
     const curved = curvedLine({
       startLan,
@@ -31,6 +30,10 @@ function TravelsMap() {
       </div>
     );
   });
+
+  useEffect(() => {
+    uptadedMarkers = [];
+  }, []);
 
   useEffect(() => {
     if (selectedTravelsForMap?.length) {

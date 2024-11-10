@@ -36,10 +36,14 @@ function Header() {
     >
       <div className="container h-full">
         <div className="flex justify-between items-center h-full mx-4">
-          <Link to="/" className="text-2xl font-serif">
+          <Link to="/" className="text-xl sm:text-2xl font-serif">
             Travel Planner
           </Link>
-          <Button onClick={handleOpenModal} size="lg">
+          <Button
+            onClick={handleOpenModal}
+            size="lg"
+            className="text-sm sm:text-base px-6 sm:px-8"
+          >
             Add a new trip
           </Button>
         </div>
@@ -48,5 +52,6 @@ function Header() {
     </header>
   );
 }
+//sm:size-lg
 
 export default Header;

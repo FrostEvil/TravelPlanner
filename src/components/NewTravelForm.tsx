@@ -37,6 +37,14 @@ function NewTravelForm({ setIsModalOpen }: ModalProps) {
       city: values.city,
       date: values.date.toISOString().split("T")[0],
     });
+    if (postStatus === undefined) {
+      toast({
+        variant: "destructive",
+        description: "This travel already exist!",
+      });
+      form.reset();
+      return;
+    }
     if (postStatus) {
       toast({
         description: "You have successfully added a new place!",

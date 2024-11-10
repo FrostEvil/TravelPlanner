@@ -3,16 +3,21 @@ import getDetailedTravel from "@/api/getDetailedTravel";
 import { TravelProps } from "@/types/type";
 import { Button } from "./ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { TravelContext } from "@/pages/TravelPlannerPage";
 import { IoMdClose } from "react-icons/io";
 import { toast } from "@/hooks/use-toast";
 import { useSidebar } from "./ui/sidebar";
-import uptadeShowMapTravel from "@/utils/uptadeShowMapTravel";
 
 function TravelItem({ city, date, id }: TravelProps) {
   const [isTravelShow, setIsTravelShow] = useState<boolean>(false);
-  const { open: isSidebarOpen, setOpen: setIsSidebarOpen } = useSidebar();
+  const {
+    open: isSidebarOpen,
+    setOpen: setIsSidebarOpen,
+    openMobile,
+    setOpenMobile,
+    isMobile,
+  } = useSidebar();
 
   const { data: travelDetails } = useQuery({
     queryKey: ["travelDetails", city],
@@ -58,15 +63,16 @@ function TravelItem({ city, date, id }: TravelProps) {
       });
     }
     setKey((k) => k + 1);
+    setSelectedTravelsForMap([]);
   };
 
   const handleShowSidebarTravelDetails = () => {
     setDetailedTravel(travelDetails);
-    setIsSidebarOpen(!isSidebarOpen);
+    isMobile ? setOpenMobile(!openMobile) : setIsSidebarOpen(!isSidebarOpen);
   };
 
   return (
-    <div className="grid grid-cols-2 gap-x-8 gap-y-8 p-2 my-2 border-b-2 ">
+    <div className="grid grid-cols-2 gap-4 sm:gap-8  p-2 my-2 border-b-2 ">
       <div className="flex items-center ">
         <Button
           variant="ghost"
@@ -77,9 +83,13 @@ function TravelItem({ city, date, id }: TravelProps) {
         >
           <IoMdClose />
         </Button>
-        <h3 className="font-mono text-xl text-primary ml-2">{city}</h3>
+        <h3 className="font-mono text-base md:text-xl text-primary ml-2">
+          {city}
+        </h3>
       </div>
-      <p className="place-self-end mr-1">{date}</p>
+      <p className=" text-sm lg:text-base place-self-end self-center mr-1">
+        {date}
+      </p>
       <Button
         onClick={handleShowMapTravel}
         size="sm"

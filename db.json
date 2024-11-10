@@ -1,3 +1,19 @@
 {
-  "travels": []
+  "travels": [
+    {
+      "id": "1515bdef-69fd-456c-a392-16dd8ac2aaea",
+      "city": "Paris",
+      "date": "2024-10-30"
+    },
+    {
+      "id": "fc888914-2abd-4352-bc0c-dc3f884e9146",
+      "city": "Warszawa",
+      "date": "2024-10-28"
+    },
+    {
+      "id": "3be09f1d-187d-48ba-b7a7-ee4768710e42",
+      "city": "Berlin",
+      "date": "2024-10-28"
+    }
+  ]
 }

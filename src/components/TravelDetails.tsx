@@ -19,16 +19,22 @@ function TravelDetails({
   timezone,
   offset_time,
 }: DetailedTravelProps) {
-  const { open, setOpen } = useSidebar();
+  const {
+    open: isSidebarOpen,
+    setOpen: setIsSidebarOpen,
+    openMobile,
+    setOpenMobile,
+    isMobile,
+  } = useSidebar();
 
   const handleCloseModalByEscape = (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key === "Escape") {
-      setOpen(!!open);
+      isMobile ? setOpenMobile(!openMobile) : setIsSidebarOpen(!isSidebarOpen);
     }
   };
 
   const handleCloseSidebar = () => {
-    setOpen(!open);
+    isMobile ? setOpenMobile(!openMobile) : setIsSidebarOpen(!isSidebarOpen);
   };
 
   return (
@@ -64,7 +70,9 @@ function TravelDetails({
           </SidebarMenuButton>
         </SidebarContent>
       </Sidebar>
-      {open && <div className="fixed inset-0 bg-white opacity-80 z-40"></div>}
+      {(isSidebarOpen || openMobile) && (
+        <div className="fixed inset-0 bg-white opacity-80 z-40"></div>
+      )}
     </div>
   );
 }

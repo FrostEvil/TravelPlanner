@@ -56,7 +56,7 @@ function TravelPlannerPage() {
           <section key={key}>
             <div className="h-[calc(100vh-64px)] bg-bgImage  bg-center bg-no-repeat bg-cover shadow-inner -z-10 before:absolute before:w-full before:h-screen before:inset-0 before:bg-[#00000044]">
               <div className="container h-full">
-                <div className="relative flex justify-between items-center h-full z-20">
+                <div className=" gap-4 mx-4 relative flex flex-col md:flex-row justify-around items-center h-full z-20">
                   <TravelsList />
                   <TravelsMapContainer />
                 </div>
