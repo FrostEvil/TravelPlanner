@@ -18,12 +18,14 @@ Travel List View Map View Details Sidebar
 📦 Installation
 To run this project locally, follow these steps:
 
-Clone the repository
+1. **Clone the repository**
 
-bash
-Skopiuj kod
-git clone https://github.com/yourusername/your-repo-name.git
-cd your-repo-name
+   ```bash
+   git clone https://github.com/yourusername/your-repo-name.git
+   cd your-repo-name
+
+   ```
+
 Install dependencies
 
 bash
