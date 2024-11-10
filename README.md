@@ -1,14 +1,17 @@
-🌍 Travel List API with Interactive Map
+## 🌍 Travel List API with Interactive Map
+
 This project is a Travel List API that allows users to view and manage a list of travel locations. Each location can be displayed on a map, and users can view detailed information in a sidebar. The app is built with React, Vite, TypeScript, and Tailwind CSS to ensure fast, efficient, and stylish performance.
 
-✨ Features
+## ✨ Features
+
 Travel List Display: Lists all travel added by the user.
 Interactive Map View: Click on "Show" to visualize each travel location on a dynamic map.
 Detail Sidebar: Click "More" to see detailed information about each travel location in a collapsible sidebar.
 Responsive Design: Fully optimized for desktop and mobile views with Tailwind CSS.
 Fast and Lightweight: Built with Vite for quick load times and efficient bundling.
 
-🚀 Tech Stack
+## 🚀 Tech Stack
+
 Frontend: React, TypeScript
 Styling: Tailwind CSS
 Bundler: Vite
@@ -50,10 +53,12 @@ npm run dev
 Access the app
 Open http://localhost:3000 in your browser.
 
-⚙️ Usage
+## ⚙️ Usage
+
 Add Travel Locations: Add new travel locations to your list.
 View Locations on Map: Click the "Show" button next to any travel location to view it on the map.
 See Details: Click "More" to expand the sidebar with detailed information about the selected location.
 
-🤝 Contributions
+## 🤝 Contributions
+
 Contributions are welcome! Please submit a pull request or open an issue for suggestions and feedback.
