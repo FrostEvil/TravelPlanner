@@ -1,13 +1,23 @@
 import getTravels from "@/api/getTravels";
 import TravelItem from "./TravelItem";
-import { useQuery } from "@tanstack/react-query";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useQuery } from "@tanstack/react-query";
 
 function TravelsList() {
   const { data: travels } = useQuery({
     queryKey: ["travels"],
     queryFn: getTravels,
+    enabled: false,
   });
+
+  console.log(travels);
+  // let data = {};
+
+  // (async () => {
+  //   data = await getTravels();
+  //   console.log(data);
+  // })();
+  // console.log(travels);
 
   const renderedTravels = travels?.map((travel) => {
     return (

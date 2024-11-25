@@ -3,8 +3,8 @@ import { createRoot } from "react-dom/client";
 import TravelPlannerPage from "./pages/TravelPlannerPage";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "./components/ui/toaster";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const el = document.getElementById("root")!;
 const root = createRoot(el);

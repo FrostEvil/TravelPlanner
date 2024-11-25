@@ -1,6 +1,6 @@
 import { DetailedTravelProps } from "@/types/type";
 
-interface UptadeShowMapTravelProps {
+interface UpdateShowMapTravelProps {
   selectedTravelsForMap: DetailedTravelProps[] | null;
   setSelectedTravelsForMap: React.Dispatch<
     React.SetStateAction<DetailedTravelProps[] | null>
@@ -8,11 +8,11 @@ interface UptadeShowMapTravelProps {
   travelDetails: DetailedTravelProps | undefined;
 }
 
-const uptadeShowMapTravel = ({
+const updateShowMapTravel = ({
   selectedTravelsForMap,
   setSelectedTravelsForMap,
   travelDetails,
-}: UptadeShowMapTravelProps) => {
+}: UpdateShowMapTravelProps) => {
   const findIndex = selectedTravelsForMap?.findIndex(
     (travel) => travel.city === travelDetails?.city
   );
@@ -20,12 +20,12 @@ const uptadeShowMapTravel = ({
     if (findIndex === -1) {
       setSelectedTravelsForMap([...selectedTravelsForMap!, travelDetails]);
     } else {
-      const uptadedShowTravelList = selectedTravelsForMap?.filter(
+      const updatedShowTravelList = selectedTravelsForMap?.filter(
         (travel) => travel.city !== travelDetails.city
       );
-      setSelectedTravelsForMap(uptadedShowTravelList!);
+      setSelectedTravelsForMap(updatedShowTravelList!);
     }
   }
 };
 
-export default uptadeShowMapTravel;
+export default updateShowMapTravel;
