@@ -42,10 +42,10 @@ function TravelItem({ city, date, id }: TravelProps) {
       if (findIndex === -1) {
         setSelectedTravelsForMap([...selectedTravelsForMap!, travelDetails]);
       } else {
-        const uptadedShowTravelList = selectedTravelsForMap?.filter(
+        const updatedShowTravelList = selectedTravelsForMap?.filter(
           (travel) => travel.city !== travelDetails.city
         );
-        setSelectedTravelsForMap(uptadedShowTravelList!);
+        setSelectedTravelsForMap(updatedShowTravelList!);
       }
     }
   };

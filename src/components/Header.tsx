@@ -52,6 +52,5 @@ function Header() {
     </header>
   );
 }
-//sm:size-lg
 
 export default Header;

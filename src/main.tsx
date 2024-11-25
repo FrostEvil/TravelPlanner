@@ -5,7 +5,6 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "./components/ui/toaster";
-import { SidebarProvider } from "./components/ui/sidebar";
 
 const el = document.getElementById("root")!;
 const root = createRoot(el);
@@ -22,12 +21,8 @@ const router = createBrowserRouter([
 root.render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      {/* <SidebarProvider defaultOpen={true}> */}
       <RouterProvider router={router} />
       <Toaster />
-      {/* </SidebarProvider> */}
     </QueryClientProvider>
   </StrictMode>
 );
-
-//className="absolute top-0 h-fit"

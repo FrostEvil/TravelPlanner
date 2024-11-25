@@ -7,7 +7,7 @@ import { LatLngBoundsExpression } from "leaflet";
 import { startLan, startLon } from "@/constants/starterMarkerCoords";
 
 function TravelsMap() {
-  const { selectedTravelsForMap, key } = useContext(TravelContext);
+  const { selectedTravelsForMap } = useContext(TravelContext);
   const map = useMap();
 
   const setStyle = () => {
@@ -31,9 +31,9 @@ function TravelsMap() {
     );
   });
 
-  useEffect(() => {
-    uptadedMarkers = [];
-  }, []);
+  // useEffect(() => {
+  //   uptadedMarkers = [];
+  // }, []);
 
   useEffect(() => {
     if (selectedTravelsForMap?.length) {

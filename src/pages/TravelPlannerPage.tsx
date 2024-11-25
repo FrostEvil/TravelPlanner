@@ -34,7 +34,7 @@ function TravelPlannerPage() {
   const [selectedTravelsForMap, setSelectedTravelsForMap] = useState<
     DetailedTravelProps[] | null
   >([]);
-  // Stored detailed info about selected travel - "shows on sidebar after see details button is clicked"
+  // Stored detailed info about selected travel - "shows on sidebar after "More" button is clicked"
   const [detailedTravel, setDetailedTravel] = useState<DetailedTravelProps>();
   // Hook which cause re render of TravelsList component when a new travel is added
   const [key, setKey] = useState<number>(0);
