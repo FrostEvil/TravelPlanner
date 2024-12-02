@@ -1,16 +1,25 @@
 import deleteTravel from "@/api/deleteTravel";
-import getDetailedTravel from "@/api/getDetailedTravel";
-import { TravelProps } from "@/types/type";
+// import getDetailedTravel from "@/api/getDetailedTravel";
 import { Button } from "./ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { useContext, useState } from "react";
-import { TravelContext } from "@/pages/TravelPlannerPage";
 import { IoMdClose } from "react-icons/io";
 import { toast } from "@/hooks/use-toast";
 import { useSidebar } from "./ui/sidebar";
+import { DetailedTravelProps } from "@/types/type";
 
-function TravelItem({ city, date, id }: TravelProps) {
-  const [isTravelShow, setIsTravelShow] = useState<boolean>(false);
+interface TravelItemProps {
+  travel: DetailedTravelProps;
+  travelsDetails: DetailedTravelProps[];
+  setTravelsDetails: React.Dispatch<
+    React.SetStateAction<DetailedTravelProps[]>
+  >;
+}
+
+function TravelItem({
+  travel,
+  travelsDetails,
+  setTravelsDetails,
+}: TravelItemProps) {
+  // const [isTravelShow, setIsTravelShow] = useState<boolean>(false);
   const {
     open: isSidebarOpen,
     setOpen: setIsSidebarOpen,
@@ -18,36 +27,43 @@ function TravelItem({ city, date, id }: TravelProps) {
     setOpenMobile,
     isMobile,
   } = useSidebar();
-
-  const { data: travelDetails } = useQuery({
-    queryKey: ["travelDetails", city],
-    queryFn: ({ queryKey }) => getDetailedTravel(queryKey[1]),
-  });
-
-  const {
-    selectedTravelsForMap,
-    setSelectedTravelsForMap,
-    setKey,
-    setDetailedTravel,
-  } = useContext(TravelContext);
-
+  // const { data: travelDetails } = useQuery({
+  //   queryKey: ["travelDetails", city],
+  //   queryFn: ({ queryKey }) => getDetailedTravel(queryKey[1]),
+  // });
   const handleShowMapTravel = () => {
-    setIsTravelShow(!isTravelShow);
+    if (!travel.isShowingOnMap) {
+      const updatedTravels = travelsDetails.map((t) => {
+        if (t.id === travel.id) return { ...t, isShowingOnMap: true };
+
+        return { ...t };
+      });
+
+      setTravelsDetails(updatedTravels);
+      return;
+    }
+    const updatedTravels = travelsDetails.map((t) => {
+      if (t.id === travel.id) return { ...t, isShowingOnMap: false };
+
+      return { ...t };
+    });
+
+    setTravelsDetails(updatedTravels);
 
     //checking if travel is already showing on map
-    const findIndex = selectedTravelsForMap?.findIndex(
-      (travel) => travel.city === travelDetails?.city
-    );
-    if (travelDetails) {
-      if (findIndex === -1) {
-        setSelectedTravelsForMap([...selectedTravelsForMap!, travelDetails]);
-      } else {
-        const updatedShowTravelList = selectedTravelsForMap?.filter(
-          (travel) => travel.city !== travelDetails.city
-        );
-        setSelectedTravelsForMap(updatedShowTravelList!);
-      }
-    }
+    //   const findIndex = selectedTravelsForMap?.findIndex(
+    //     (travel) => travel.city === travelDetails?.city
+    //   );
+    //   if (travelDetails) {
+    //     if (findIndex === -1) {
+    //       setSelectedTravelsForMap([...selectedTravelsForMap!, travelDetails]);
+    //     } else {
+    //       const updatedShowTravelList = selectedTravelsForMap?.filter(
+    //         (travel) => travel.city !== travelDetails.city
+    //       );
+    //       setSelectedTravelsForMap(updatedShowTravelList!);
+    //     }
+    //   }
   };
 
   const handleDeleteTravel = async (id: string) => {
@@ -62,12 +78,12 @@ function TravelItem({ city, date, id }: TravelProps) {
         description: "Something went wrong... Try again.",
       });
     }
-    setKey((k) => k + 1);
-    setSelectedTravelsForMap([]);
+    // setKey((k) => k + 1);
+    // setSelectedTravelsForMap([]);
   };
 
   const handleShowSidebarTravelDetails = () => {
-    setDetailedTravel(travelDetails);
+    // setDetailedTravel(travelDetails);
     isMobile ? setOpenMobile(!openMobile) : setIsSidebarOpen(!isSidebarOpen);
   };
 
@@ -78,24 +94,24 @@ function TravelItem({ city, date, id }: TravelProps) {
           variant="ghost"
           size="icon"
           onClick={() => {
-            handleDeleteTravel(id);
+            handleDeleteTravel(travel.id);
           }}
         >
           <IoMdClose />
         </Button>
         <h3 className="font-mono text-base md:text-xl text-primary ml-2">
-          {city}
+          {travel.city}
         </h3>
       </div>
       <p className=" text-sm lg:text-base place-self-end self-center mr-1">
-        {date}
+        {travel.date}
       </p>
       <Button
         onClick={handleShowMapTravel}
         size="sm"
-        variant={isTravelShow === true ? "hide" : "show"}
+        variant={travel.isShowingOnMap === true ? "hide" : "show"}
       >
-        {isTravelShow ? "Hide" : "Show"}
+        {travel.isShowingOnMap ? "Hide" : "Show"}
       </Button>
       <Button onClick={handleShowSidebarTravelDetails} size="sm">
         More

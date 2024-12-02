@@ -1,20 +1,25 @@
 import "leaflet/dist/leaflet.css";
 import curvedLine from "@/utils/curvedLine";
-import { useContext, useEffect } from "react";
-import { TravelContext } from "@/pages/TravelPlannerPage";
+import { useEffect, useMemo } from "react";
 import { Marker, Popup, GeoJSON, useMap } from "react-leaflet";
 import { LatLngBoundsExpression } from "leaflet";
 import { startLan, startLon } from "@/constants/starterMarkerCoords";
+import { DetailedTravelProps } from "@/types/type";
 
-function TravelsMap() {
-  const { selectedTravelsForMap } = useContext(TravelContext);
+function TravelsMap({
+  travelsDetails,
+}: {
+  travelsDetails: DetailedTravelProps[];
+}) {
   const map = useMap();
-
   const setStyle = () => {
     return { weight: 3, color: "red" };
   };
+  const showedTravels: DetailedTravelProps[] = useMemo(() => {
+    return travelsDetails.filter((travel) => travel.isShowingOnMap);
+  }, [travelsDetails]);
 
-  let uptadedMarkers = selectedTravelsForMap?.map((travel) => {
+  let uptadedMarkers = showedTravels?.map((travel) => {
     const curved = curvedLine({
       startLan,
       startLon,
@@ -30,14 +35,37 @@ function TravelsMap() {
       </div>
     );
   });
+  //   const memoizedValue = useMemo(() => {
+  //     // Your expensive computation or transformation logic here
+  //     travelsDetails?.map((travel) => {
+  //       const curved = curvedLine({
+  //         startLan,
+  //         startLon,
+  //         endLan: travel.lat,
+  //         endLon: travel.lon,
+  //       });
+  //       return (
+  //         <div key={travel.id}>
+  //           {!travel.isShowingOnMap && (
+  //             <>
+  //               <Marker position={[travel.lat, travel.lon]}>
+  //                 <Popup className="capitalize">{travel.city}</Popup>
+  //               </Marker>
+  //               <GeoJSON data={curved} style={setStyle} />
+  //             </>
+  //           )}
+  //         </div>
+  //       );
+  //     });
+  //   }, [travelsDetails]);
 
-  // useEffect(() => {
-  //   uptadedMarkers = [];
-  // }, []);
+  //   useEffect(() => {
+  //     uptadedMarkers = [];
+  //   }, []);
 
   useEffect(() => {
-    if (selectedTravelsForMap?.length) {
-      const travelCoords: LatLngBoundsExpression = selectedTravelsForMap.map(
+    if (showedTravels?.length) {
+      const travelCoords: LatLngBoundsExpression = showedTravels.map(
         (travel) => {
           return [travel.lat, travel.lon];
         }
@@ -45,14 +73,14 @@ function TravelsMap() {
       travelCoords.push([startLan, startLon]);
       map.fitBounds(travelCoords);
     }
-  }, [selectedTravelsForMap]);
+  }, [showedTravels]);
 
   return (
     <div>
       <Marker position={[51.246452, 22.568445]}>
         <Popup>Lublin</Popup>
       </Marker>
-      {selectedTravelsForMap && uptadedMarkers}
+      {travelsDetails && uptadedMarkers}
     </div>
   );
 }

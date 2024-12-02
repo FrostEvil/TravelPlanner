@@ -2,6 +2,7 @@ export interface TravelProps {
   id: string;
   city: string;
   date: string;
+  isShowingOnMap?: boolean;
 }
 
 export interface DetailedTravelProps {
@@ -15,6 +16,8 @@ export interface DetailedTravelProps {
   timezone: string;
   offset_time: string;
   id: string;
+  date: string;
+  isShowingOnMap: boolean;
 }
 
 export interface ModalProps {
@@ -32,3 +35,7 @@ export interface formValuesProps {
   city: string;
   travelDate: string;
 }
+
+export type setSelectedTravelsForMapProps = React.Dispatch<
+  React.SetStateAction<DetailedTravelProps[]>
+>;

@@ -6,19 +6,14 @@
       "date": "2024-10-28"
     },
     {
-      "id": "97e05e6f-2c25-48fd-acc1-1ed24cbd8373",
-      "city": "Berlin",
-      "date": "2024-10-28"
-    },
-    {
-      "id": "218468f4-8fb8-4001-8660-61c86fdb1f5f",
-      "city": "Valencia",
-      "date": "2024-11-05"
-    },
-    {
-      "id": "e80c5ba4-d196-41d1-bf5b-4b41de23746c",
+      "id": "09cac690-f53d-43dc-853e-c507576ee851",
       "city": "Bychawa",
-      "date": "2024-11-12"
+      "date": "2024-12-16"
+    },
+    {
+      "id": "58475d0e-a6b9-4e68-bf02-643f4fd1322c",
+      "city": "Valencia",
+      "date": "2024-12-16"
     }
   ]
 }

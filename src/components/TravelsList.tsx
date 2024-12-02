@@ -1,28 +1,23 @@
-import getTravels from "@/api/getTravels";
+import { DetailedTravelProps } from "@/types/type";
 import TravelItem from "./TravelItem";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useQuery } from "@tanstack/react-query";
 
-function TravelsList() {
-  const { data: travels } = useQuery({
-    queryKey: ["travels"],
-    queryFn: getTravels,
-    enabled: false,
-  });
+interface TravelsListProps {
+  travelsDetails: DetailedTravelProps[];
+  setTravelsDetails: React.Dispatch<
+    React.SetStateAction<DetailedTravelProps[]>
+  >;
+}
 
-  console.log(travels);
-  // let data = {};
-
-  // (async () => {
-  //   data = await getTravels();
-  //   console.log(data);
-  // })();
-  // console.log(travels);
-
-  const renderedTravels = travels?.map((travel) => {
+function TravelsList({ travelsDetails, setTravelsDetails }: TravelsListProps) {
+  const renderedTravels = travelsDetails?.map((travel) => {
     return (
       <li key={travel.id}>
-        <TravelItem {...travel} />
+        <TravelItem
+          travel={travel}
+          travelsDetails={travelsDetails}
+          setTravelsDetails={setTravelsDetails}
+        />
       </li>
     );
   });

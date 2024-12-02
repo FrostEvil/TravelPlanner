@@ -19,82 +19,105 @@ import { Calendar } from "./ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
-import { ModalProps } from "@/types/type";
 import { toast } from "@/hooks/use-toast";
-import { TravelContext } from "@/pages/TravelPlannerPage";
-import { useContext } from "react";
+import { useState } from "react";
 
-function NewTravelForm({ setIsModalOpen }: ModalProps) {
-  const { setKey, setSelectedTravelsForMap } = useContext(TravelContext);
+type ValidationResult = {
+  status: "success" | "exist" | "error";
+  message: string;
+};
+
+type ToastProps = {
+  variant: "default" | "destructive" | null | undefined;
+  description: string;
+};
+
+function NewTravelForm({
+  setOpenDialog,
+}: {
+  setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
+  const handleToast = (result: ValidationResult) => {
+    const toastConfig = {
+      success: { variant: "default", description: result.message },
+      exist: { variant: "destructive", description: result.message },
+      error: { variant: "destructive", description: result.message },
+    };
+    toast(toastConfig[result.status] as ToastProps);
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const postStatus = await validateAndAddTravel({
-      id: uuidv4(),
-      city: values.city,
-      date: values.date.toISOString().split("T")[0],
-    });
-    if (postStatus === "exist") {
+    setIsSubmitting(true);
+    try {
+      const addTravelResult: ValidationResult = await validateAndAddTravel({
+        id: uuidv4(),
+        city: values.city,
+        date: values.date.toISOString().split("T")[0],
+      });
+
+      handleToast(addTravelResult);
+
+      if (addTravelResult.status === "success") {
+        setOpenDialog(false);
+        form.reset();
+      }
+    } catch (error) {
       toast({
         variant: "destructive",
-        description: "This travel already exist!",
+        description: "An unexpected error occurred. Please try again.",
       });
-      form.reset();
-      return;
+    } finally {
+      setIsSubmitting(false);
     }
-    if (postStatus) {
-      toast({
-        description: "You have successfully added a new place!",
-      });
-      setKey((k) => k + 1);
-      setSelectedTravelsForMap([]);
-      setIsModalOpen(false);
-    } else {
-      toast({
-        variant: "destructive",
-        description: "Something went wrong... Try again.",
-      });
-    }
-    form.reset();
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* City Input */}
         <FormField
           control={form.control}
           name="city"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Enter city: </FormLabel>
+              <FormLabel htmlFor="city">Enter city: </FormLabel>
               <FormControl>
                 <Input
+                  id="city"
                   placeholder="city name..."
                   {...field}
                   value={field.value || ""}
+                  aria-label="City name"
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        {/* Date Picker */}
         <FormField
           control={form.control}
           name="date"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Date of travel:</FormLabel>
+              <FormLabel htmlFor="date">Date of travel:</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                      variant={"outline"}
+                      id="date"
+                      variant="outline"
                       className={cn(
                         "w-full pl-3 text-left font-normal",
                         !field.value && "text-muted-foreground"
                       )}
+                      aria-label="Select travel date"
                     >
                       {field.value ? (
                         format(field.value, "PPP")
@@ -118,12 +141,18 @@ function NewTravelForm({ setIsModalOpen }: ModalProps) {
             </FormItem>
           )}
         />
-        <Button type="submit" variant="default" size="lg" className="w-full ">
-          Submit
+        {/* Submit Button */}
+        <Button
+          type="submit"
+          variant="default"
+          size="lg"
+          className="w-full"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Submitting..." : "Submit"}
         </Button>
       </form>
     </Form>
   );
 }
-
 export default NewTravelForm;
