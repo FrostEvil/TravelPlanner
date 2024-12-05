@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="90" fill="#14B8A6" />
+
+  <!-- Compass Shape -->
+  <path d="M100 45 L115 70 L130 45 L115 20 L100 45 Z" fill="#ffffff" />
+  <path d="M100 45 L85 70 L70 45 L85 20 L100 45 Z" fill="#ffffff" />
+
+  <!-- Map Pin -->
+  <circle cx="100" cy="100" r="30" fill="#ffffff" />
+  <path d="M100 130 C90 140, 90 160, 100 170 C110 160, 110 140, 100 130 Z" fill="#ffffff" />
+
+
+</svg>

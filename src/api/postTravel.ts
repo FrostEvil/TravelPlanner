@@ -1,19 +1,28 @@
 import axios from "axios";
 import { TravelProps } from "@/types/type";
 
-type PostTravelProp = {
-  postStatus: string;
-};
+const postTravel = async (city: TravelProps): Promise<TravelProps> => {
+  if (!city || !city.city) {
+    throw new Error("Invalid input: City information is required.");
+  }
 
-const postTravel = async (city: TravelProps): Promise<PostTravelProp> => {
   try {
-    const reponse = await axios.post("http://localhost:3000/travels", city);
-    if (reponse.status !== 201) {
-      return { postStatus: "Failed" };
+    const response = await axios.post("http://localhost:3000/travels", city);
+
+    if (response.status !== 201) {
+      throw new Error(`Unexpected response status: ${response.status}`);
     }
-    return { postStatus: "Success" };
+    return response.data;
   } catch (error) {
-    throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        `Failed to post travel: ${
+          error.response?.status || "Unknown Status"
+        } - ${error.message}`
+      );
+    }
+
+    throw new Error("An unexpected error occurred while posting travel.");
   }
 };
 

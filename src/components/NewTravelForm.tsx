@@ -3,127 +3,93 @@ import { formSchema } from "@/schemas/formSchema";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./ui/form";
+import { Form, FormField } from "./ui/form";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { Calendar } from "./ui/calendar";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
-import { ModalProps } from "@/types/type";
 import { toast } from "@/hooks/use-toast";
-import { TravelContext } from "@/pages/TravelPlannerPage";
-import { useContext } from "react";
+import { useState } from "react";
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  useMutation,
+} from "@tanstack/react-query";
+import { TravelProps } from "@/types/type";
+import CityInputField from "./CityInputField";
+import DataPickerField from "./DataPickerField";
+import { handleToast } from "@/utils/handleToast";
 
-function NewTravelForm({ setIsModalOpen }: ModalProps) {
-  const { setKey, setSelectedTravelsForMap } = useContext(TravelContext);
+type NewTravelFormProps = {
+  setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  refetchTravels: (
+    options?: RefetchOptions | undefined
+  ) => Promise<QueryObserverResult<TravelProps[], Error>>;
+};
+
+function NewTravelForm({ setOpenDialog, refetchTravels }: NewTravelFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
+  const mutation = useMutation({
+    mutationFn: validateAndAddTravel,
+    onSuccess: (data) => {
+      handleToast(data);
+      if (data.status === "success") {
+        setOpenDialog(false);
+        refetchTravels();
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred.";
+      toast({
+        variant: "destructive",
+        description: errorMessage,
+      });
+    },
+    onSettled: () => setIsSubmitting(false),
+  });
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const postStatus = await validateAndAddTravel({
+    setIsSubmitting(true);
+    mutation.mutate({
       id: uuidv4(),
       city: values.city,
       date: values.date.toISOString().split("T")[0],
     });
-    if (postStatus === "exist") {
-      toast({
-        variant: "destructive",
-        description: "This travel already exist!",
-      });
-      form.reset();
-      return;
-    }
-    if (postStatus) {
-      toast({
-        description: "You have successfully added a new place!",
-      });
-      setKey((k) => k + 1);
-      setSelectedTravelsForMap([]);
-      setIsModalOpen(false);
-    } else {
-      toast({
-        variant: "destructive",
-        description: "Something went wrong... Try again.",
-      });
-    }
-    form.reset();
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* City Input */}
         <FormField
           control={form.control}
           name="city"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Enter city: </FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="city name..."
-                  {...field}
-                  value={field.value || ""}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => <CityInputField field={field} />}
         />
+        {/* Date Picker */}
         <FormField
           control={form.control}
           name="date"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Date of travel:</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => <DataPickerField field={field} />}
         />
-        <Button type="submit" variant="default" size="lg" className="w-full ">
-          Submit
+        {/* Submit Button */}
+        <Button
+          type="submit"
+          variant="default"
+          size="lg"
+          className={`w-full ${
+            isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Submitting..." : "Submit"}
         </Button>
       </form>
     </Form>
   );
 }
-
 export default NewTravelForm;

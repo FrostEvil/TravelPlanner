@@ -1,10 +1,11 @@
-export interface TravelProps {
+export type TravelProps = {
   id: string;
   city: string;
   date: string;
-}
+  isShowingOnMap?: boolean;
+};
 
-export interface DetailedTravelProps {
+export type DetailedTravels = {
   city: string;
   country: string;
   lat: number;
@@ -15,20 +16,29 @@ export interface DetailedTravelProps {
   timezone: string;
   offset_time: string;
   id: string;
-}
+};
 
-export interface ModalProps {
+export type TravelsDetails = DetailedTravels & {
+  date: string;
+  isShowingOnMap: boolean;
+};
+
+export type ModalProps = {
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 
-export interface StartEndCoords {
+export type StartEndCoords = {
   startLan: number;
   startLon: number;
   endLan: number;
   endLon: number;
-}
+};
 
-export interface formValuesProps {
+export type formValuesProps = {
   city: string;
   travelDate: string;
-}
+};
+
+export type setSelectedTravelsForMapProps = React.Dispatch<
+  React.SetStateAction<DetailedTravels[]>
+>;

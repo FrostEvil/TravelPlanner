@@ -1,54 +1,29 @@
-import Modal from "./Modal";
-import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Logo from "../components/ui/svg/logo.svg";
 
 function Header() {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (isModalOpen) {
-      document.body.setAttribute("style", "overflow:hidden");
-    }
-
-    return () => {
-      document.body.setAttribute("style", "overflow:visible");
-    };
-  }, [isModalOpen]);
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    if (isModalOpen) setIsModalOpen(false);
-  };
-
-  const handleCloseModalByEscapeKey = (e: React.KeyboardEvent<HTMLElement>) => {
-    if (e.key === "Escape") setIsModalOpen(false);
-  };
-
   return (
-    <header
-      onClick={handleCloseModal}
-      onKeyUp={handleCloseModalByEscapeKey}
-      className="relative h-16 w-full z-10 bg-white"
-    >
+    <header className="relative h-16 w-full z-10 bg-white shadow-md">
       <div className="container h-full">
-        <div className="flex justify-between items-center h-full mx-4">
-          <Link to="/" className="text-xl sm:text-2xl font-serif">
+        <nav className="flex justify-between items-center h-full mx-4">
+          <Link
+            to="/"
+            className="text-xl sm:text-2xl font-serif"
+            aria-label="Travel Planner Home"
+          >
             Travel Planner
           </Link>
-          <Button
-            onClick={handleOpenModal}
-            size="lg"
-            className="text-sm sm:text-base px-6 sm:px-8"
-          >
-            Add a new trip
-          </Button>
-        </div>
+          <Link to="/">
+            <img
+              src={Logo}
+              alt="Travel Planner Logo"
+              width="64"
+              height="64"
+              loading="lazy"
+            />
+          </Link>
+        </nav>
       </div>
-      <div>{isModalOpen && <Modal {...{ setIsModalOpen }} />}</div>
     </header>
   );
 }

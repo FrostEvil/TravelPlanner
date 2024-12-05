@@ -1,19 +1,19 @@
 {
   "travels": [
     {
-      "id": "7d092e74-df5c-46e1-901e-0b0a449aa086",
-      "city": "Paris",
-      "date": "2024-10-28"
-    },
-    {
-      "id": "97e05e6f-2c25-48fd-acc1-1ed24cbd8373",
-      "city": "Berlin",
-      "date": "2024-10-28"
-    },
-    {
-      "id": "218468f4-8fb8-4001-8660-61c86fdb1f5f",
+      "id": "f3170825-f503-449c-b0ad-a4b7bbc8c158",
       "city": "Valencia",
-      "date": "2024-11-05"
+      "date": "2024-12-17"
+    },
+    {
+      "id": "9b71b8e7-219e-438a-9c82-ed8be6b1cdc4",
+      "city": "Paris",
+      "date": "2024-12-02"
+    },
+    {
+      "id": "29904bf7-7f7d-4065-a4ec-77557f615dd3",
+      "city": "Bychawa",
+      "date": "2024-12-03"
     }
   ]
 }

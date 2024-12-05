@@ -1,4 +1,4 @@
-import { DetailedTravelProps } from "@/types/type";
+import { TravelsDetails } from "@/types/type";
 import {
   Sidebar,
   SidebarContent,
@@ -8,17 +8,23 @@ import {
 } from "./ui/sidebar";
 import { IoMdClose } from "react-icons/io";
 
-function TravelDetails({
-  city,
-  country,
-  lat,
-  lon,
-  category,
-  formatted,
-  state,
-  timezone,
-  offset_time,
-}: DetailedTravelProps) {
+type TravelDetailsType = {
+  travelDetail: TravelsDetails;
+};
+
+function TravelDetails({ travelDetail }: TravelDetailsType) {
+  const {
+    city,
+    country,
+    lat,
+    lon,
+    formatted,
+    state,
+    category,
+    timezone,
+    offset_time,
+  } = travelDetail;
+
   const {
     open: isSidebarOpen,
     setOpen: setIsSidebarOpen,

@@ -2,39 +2,56 @@ import { StartEndCoords } from "@/types/type";
 import { Feature, GeoJsonProperties, LineString } from "geojson";
 import * as turf from "@turf/turf";
 
+/**
+ * Generates a curved line between two geographical points using bezier spline.
+ *
+ * @param startLan - Latitude of the start point
+ * @param startLon - Longitude of the start point
+ * @param endLan - Latitude of the end point
+ * @param endLon - Longitude of the end point
+ * @returns A GeoJSON Feature of a curved LineString
+ */
 const curvedLine = ({
   startLan,
   startLon,
   endLan,
   endLon,
 }: StartEndCoords): Feature<LineString, GeoJsonProperties> => {
-  const latlng1 = [startLan, startLon];
-  const latlng2 = [endLan, endLon];
-  const offsetX = latlng2[1] - latlng1[1];
-  const offsetY = latlng2[0] - latlng1[0];
+  // Define start and end points
+  const startPoint = [startLan, startLon];
+  const endPoint = [endLan, endLon];
 
-  const r = Math.sqrt(Math.pow(offsetX, 2) + Math.pow(offsetY, 2)),
-    theta = Math.atan2(offsetY, offsetX);
+  // Calculate offsets
+  const offsetX = endPoint[1] - startPoint[1];
+  const offsetY = endPoint[0] - startPoint[0];
 
-  const thetaOffset = 3.14 / 10;
+  // Calculate distance and angle
+  const distance = Math.sqrt(offsetX ** 2 + offsetY ** 2);
+  const angle = Math.atan2(offsetY, offsetX);
 
-  const r2 = r / 2 / Math.cos(thetaOffset);
-  const theta2 = theta + thetaOffset;
+  // Define curve offset angle (π / 10 radians)
+  const CURVE_ANGLE_OFFSET = Math.PI / 10;
 
-  const midpointX = r2 * Math.cos(theta2) + latlng1[1];
-  const midpointY = r2 * Math.sin(theta2) + latlng1[0];
+  // Calculate midpoint coordinates for the curve
+  const adjustedDistance = distance / (2 * Math.cos(CURVE_ANGLE_OFFSET));
+  const adjustedAngle = angle + CURVE_ANGLE_OFFSET;
+  const midpointLon =
+    adjustedDistance * Math.cos(adjustedAngle) + startPoint[1];
+  const midpointLat =
+    adjustedDistance * Math.sin(adjustedAngle) + startPoint[0];
 
-  const line = turf.helpers.lineString(
-    [
-      [startLan, startLon],
-      [midpointY, midpointX],
-      [endLan, endLon],
-    ].map((latLng) => [latLng[1], latLng[0]])
-  );
+  // Create the line with midpoint
+  const lineCoordinates = [
+    [startLon, startLan],
+    [midpointLon, midpointLat],
+    [endLon, endLan],
+  ];
 
-  const curved = turf.bezierSpline(line);
+  // Generate a bezier spline for smoothness
+  const line = turf.lineString(lineCoordinates);
+  const curvedLine = turf.bezierSpline(line);
 
-  return curved;
+  return curvedLine;
 };
 
 export default curvedLine;
