@@ -15,7 +15,6 @@ const postTravel = async (city: TravelProps): Promise<TravelProps> => {
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      // Re-throw Axios errors with meaningful messages
       throw new Error(
         `Failed to post travel: ${
           error.response?.status || "Unknown Status"
@@ -23,7 +22,6 @@ const postTravel = async (city: TravelProps): Promise<TravelProps> => {
       );
     }
 
-    // Re-throw non-Axios errors
     throw new Error("An unexpected error occurred while posting travel.");
   }
 };

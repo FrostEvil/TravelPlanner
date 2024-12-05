@@ -7,10 +7,6 @@ const getTravels = async (): Promise<TravelProps[]> => {
       "http://localhost:3000/travels"
     );
 
-    // Validate the response data (if needed)
-    if (!Array.isArray(response.data)) {
-      throw new Error("Unexpected response format: Expected an array.");
-    }
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

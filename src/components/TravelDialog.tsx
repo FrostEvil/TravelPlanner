@@ -8,8 +8,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import NewTravelForm from "./NewTravelForm";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import { TravelProps } from "@/types/type";
 
-function TravelDialog() {
+type TravelDialogProps = {
+  refetchTravels: (
+    options?: RefetchOptions | undefined
+  ) => Promise<QueryObserverResult<TravelProps[], Error>>;
+};
+
+function TravelDialog({ refetchTravels }: TravelDialogProps) {
   const [openDialog, setOpenDialog] = useState(false);
 
   return (
@@ -17,7 +25,8 @@ function TravelDialog() {
       <DialogTrigger asChild>
         <Button
           size="lg"
-          className="text-sm sm:text-base px-6 sm:px-8"
+          variant="cta"
+          className="text-sm sm:text-base px-6 sm:px-8 w-full uppercase"
           aria-label="Add a new trip"
         >
           Add a new trip
@@ -29,7 +38,10 @@ function TravelDialog() {
             Add your trip below!
           </DialogTitle>
         </DialogHeader>
-        <NewTravelForm setOpenDialog={setOpenDialog} />
+        <NewTravelForm
+          setOpenDialog={setOpenDialog}
+          refetchTravels={refetchTravels}
+        />
       </DialogContent>
     </Dialog>
   );

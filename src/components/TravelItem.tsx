@@ -1,25 +1,34 @@
 import deleteTravel from "@/api/deleteTravel";
-// import getDetailedTravel from "@/api/getDetailedTravel";
 import { Button } from "./ui/button";
 import { IoMdClose } from "react-icons/io";
-import { toast } from "@/hooks/use-toast";
 import { useSidebar } from "./ui/sidebar";
-import { DetailedTravelProps } from "@/types/type";
+import { TravelProps, TravelsDetails } from "@/types/type";
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  useMutation,
+} from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { handleToast } from "@/utils/handleToast";
 
 interface TravelItemProps {
-  travel: DetailedTravelProps;
-  travelsDetails: DetailedTravelProps[];
-  setTravelsDetails: React.Dispatch<
-    React.SetStateAction<DetailedTravelProps[]>
-  >;
+  travel: TravelsDetails;
+  travelsDetails: TravelsDetails[];
+  setTravelsDetails: React.Dispatch<React.SetStateAction<TravelsDetails[]>>;
+  setTravelDetailsSidebarId: React.Dispatch<React.SetStateAction<string>>;
+  refetchTravels: (
+    options?: RefetchOptions | undefined
+  ) => Promise<QueryObserverResult<TravelProps[], Error>>;
 }
 
 function TravelItem({
   travel,
   travelsDetails,
   setTravelsDetails,
+  setTravelDetailsSidebarId,
+  refetchTravels,
 }: TravelItemProps) {
-  // const [isTravelShow, setIsTravelShow] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const {
     open: isSidebarOpen,
     setOpen: setIsSidebarOpen,
@@ -27,64 +36,39 @@ function TravelItem({
     setOpenMobile,
     isMobile,
   } = useSidebar();
-  // const { data: travelDetails } = useQuery({
-  //   queryKey: ["travelDetails", city],
-  //   queryFn: ({ queryKey }) => getDetailedTravel(queryKey[1]),
-  // });
+
   const handleShowMapTravel = () => {
-    if (!travel.isShowingOnMap) {
-      const updatedTravels = travelsDetails.map((t) => {
-        if (t.id === travel.id) return { ...t, isShowingOnMap: true };
-
-        return { ...t };
-      });
-
-      setTravelsDetails(updatedTravels);
-      return;
-    }
-    const updatedTravels = travelsDetails.map((t) => {
-      if (t.id === travel.id) return { ...t, isShowingOnMap: false };
-
-      return { ...t };
-    });
-
+    const updatedTravels = travelsDetails.map((t) =>
+      t.id === travel.id ? { ...t, isShowingOnMap: !t.isShowingOnMap } : t
+    );
     setTravelsDetails(updatedTravels);
-
-    //checking if travel is already showing on map
-    //   const findIndex = selectedTravelsForMap?.findIndex(
-    //     (travel) => travel.city === travelDetails?.city
-    //   );
-    //   if (travelDetails) {
-    //     if (findIndex === -1) {
-    //       setSelectedTravelsForMap([...selectedTravelsForMap!, travelDetails]);
-    //     } else {
-    //       const updatedShowTravelList = selectedTravelsForMap?.filter(
-    //         (travel) => travel.city !== travelDetails.city
-    //       );
-    //       setSelectedTravelsForMap(updatedShowTravelList!);
-    //     }
-    //   }
   };
+
+  const mutation = useMutation<unknown, Error, string>({
+    mutationFn: deleteTravel,
+    onSuccess: () => {
+      handleToast({
+        status: "success",
+        message: '"You have successfully removed an existing place!"',
+      });
+      refetchTravels();
+    },
+    onError: (error) => {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred.";
+      handleToast({ status: "error", message: errorMessage });
+    },
+    onSettled: () => setIsDeleting(false),
+  });
 
   const handleDeleteTravel = async (id: string) => {
-    const response = await deleteTravel(id);
-    if (response) {
-      toast({
-        description: "You have successfully removed an existing place!",
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        description: "Something went wrong... Try again.",
-      });
-    }
-    // setKey((k) => k + 1);
-    // setSelectedTravelsForMap([]);
+    setIsDeleting(true);
+    mutation.mutate(id);
   };
 
-  const handleShowSidebarTravelDetails = () => {
-    // setDetailedTravel(travelDetails);
+  const toggleSidebar = () => {
     isMobile ? setOpenMobile(!openMobile) : setIsSidebarOpen(!isSidebarOpen);
+    setTravelDetailsSidebarId(travel.id);
   };
 
   return (
@@ -93,6 +77,7 @@ function TravelItem({
         <Button
           variant="ghost"
           size="icon"
+          disabled={isDeleting}
           onClick={() => {
             handleDeleteTravel(travel.id);
           }}
@@ -111,9 +96,9 @@ function TravelItem({
         size="sm"
         variant={travel.isShowingOnMap === true ? "hide" : "show"}
       >
-        {travel.isShowingOnMap ? "Hide" : "Show"}
+        {isDeleting ? "Processing..." : travel.isShowingOnMap ? "Hide" : "Show"}
       </Button>
-      <Button onClick={handleShowSidebarTravelDetails} size="sm">
+      <Button onClick={toggleSidebar} size="sm">
         More
       </Button>
     </div>

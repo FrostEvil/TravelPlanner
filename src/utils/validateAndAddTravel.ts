@@ -15,11 +15,12 @@ async function validateAndAddTravel(
     // Fetch existing travels
     const existingTravles = await getTravels();
 
-    const travelExists = existingTravles?.some(
-      (travel) =>
-        travel.city.toLocaleLowerCase() === formValues.city.toLocaleLowerCase()
+    // Normalize cities to lower case for comparison
+    const existingCityNames = existingTravles?.map((travel) =>
+      travel.city.toLowerCase()
     );
-    if (travelExists) {
+
+    if (existingCityNames?.includes(formValues.city.toLowerCase())) {
       return {
         status: "exist",
         message: `Travel entry for city "${formValues.city}" already exists.`,
@@ -31,16 +32,12 @@ async function validateAndAddTravel(
     if (!newPlaceGeocodedData) {
       return {
         status: "error",
-        message: `Failed to fetch geocoded data for city "${formValues.city}".`,
+        message: `Failed to fetch geocoded data for city "${formValues.city}. Entered city propably does not exist!".`,
       };
     }
 
     // Add the new travel entry
     const addedTravel = await postTravel(formValues);
-    // const createPostMutation = useMutation({
-    //   mutationFn: postTravel,
-    // });
-    // createPostMutation.mutate(formValues);
     console.log(`City "${addedTravel.city}" added with ID: ${addedTravel.id}`);
 
     return {
@@ -50,16 +47,14 @@ async function validateAndAddTravel(
   } catch (error) {
     console.error("Error in validateAndAddTravel:", error);
 
-    if (error instanceof Error) {
-      return {
-        status: "error",
-        message: `An error occurred: ${error.message}`,
-      };
-    }
-
+    // Return a user-friendly error message
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "An unexpected error occurred while adding travel.";
     return {
       status: "error",
-      message: "An unexpected error occurred while adding travel.",
+      message: `An error occurred: ${errorMessage}`,
     };
   }
 }

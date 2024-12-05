@@ -3,78 +3,62 @@ import { formSchema } from "@/schemas/formSchema";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./ui/form";
+import { Form, FormField } from "./ui/form";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { Calendar } from "./ui/calendar";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  useMutation,
+} from "@tanstack/react-query";
+import { TravelProps } from "@/types/type";
+import CityInputField from "./CityInputField";
+import DataPickerField from "./DataPickerField";
+import { handleToast } from "@/utils/handleToast";
 
-type ValidationResult = {
-  status: "success" | "exist" | "error";
-  message: string;
-};
-
-type ToastProps = {
-  variant: "default" | "destructive" | null | undefined;
-  description: string;
-};
-
-function NewTravelForm({
-  setOpenDialog,
-}: {
+type NewTravelFormProps = {
   setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+  refetchTravels: (
+    options?: RefetchOptions | undefined
+  ) => Promise<QueryObserverResult<TravelProps[], Error>>;
+};
+
+function NewTravelForm({ setOpenDialog, refetchTravels }: NewTravelFormProps) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
-  const handleToast = (result: ValidationResult) => {
-    const toastConfig = {
-      success: { variant: "default", description: result.message },
-      exist: { variant: "destructive", description: result.message },
-      error: { variant: "destructive", description: result.message },
-    };
-    toast(toastConfig[result.status] as ToastProps);
-  };
+  const mutation = useMutation({
+    mutationFn: validateAndAddTravel,
+    onSuccess: (data) => {
+      handleToast(data);
+      if (data.status === "success") {
+        setOpenDialog(false);
+        refetchTravels();
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred.";
+      toast({
+        variant: "destructive",
+        description: errorMessage,
+      });
+    },
+    onSettled: () => setIsSubmitting(false),
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
-    try {
-      const addTravelResult: ValidationResult = await validateAndAddTravel({
-        id: uuidv4(),
-        city: values.city,
-        date: values.date.toISOString().split("T")[0],
-      });
-
-      handleToast(addTravelResult);
-
-      if (addTravelResult.status === "success") {
-        setOpenDialog(false);
-        form.reset();
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        description: "An unexpected error occurred. Please try again.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    mutation.mutate({
+      id: uuidv4(),
+      city: values.city,
+      date: values.date.toISOString().split("T")[0],
+    });
   }
 
   return (
@@ -84,69 +68,22 @@ function NewTravelForm({
         <FormField
           control={form.control}
           name="city"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel htmlFor="city">Enter city: </FormLabel>
-              <FormControl>
-                <Input
-                  id="city"
-                  placeholder="city name..."
-                  {...field}
-                  value={field.value || ""}
-                  aria-label="City name"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => <CityInputField field={field} />}
         />
         {/* Date Picker */}
         <FormField
           control={form.control}
           name="date"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel htmlFor="date">Date of travel:</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      id="date"
-                      variant="outline"
-                      className={cn(
-                        "w-full pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                      aria-label="Select travel date"
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => <DataPickerField field={field} />}
         />
         {/* Submit Button */}
         <Button
           type="submit"
           variant="default"
           size="lg"
-          className="w-full"
+          className={`w-full ${
+            isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           disabled={isSubmitting}
         >
           {isSubmitting ? "Submitting..." : "Submit"}
